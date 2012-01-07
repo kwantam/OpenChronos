@@ -94,6 +94,9 @@
 #ifdef CONFIG_EGGTIMER
 #include "eggtimer.h"
 #endif
+#ifdef CONFIG_INTTIMER
+#include "inttimer.h"
+#endif
 #ifdef CONFIG_PHASE_CLOCK
 #include "phase_clock.h"
 #endif
@@ -430,6 +433,10 @@ void init_global_variables(void)
 	init_eggtimer(); // Initialize eggtimer
 #endif
 
+#ifdef CONFIG_INTTIMER
+    init_inttimer();
+#endif
+
 #ifdef CONFIG_PROUT
         reset_prout();
 #endif
@@ -623,6 +630,10 @@ void process_requests(void)
 	if (request.flag.eggtimer_buzzer) start_buzzer(2, BUZZER_ON_TICKS, BUZZER_OFF_TICKS);
 #endif
 	
+#ifdef CONFIG_INTTIMER
+    // Generate alarm (two signals every second)
+    if (request.flag.inttimer_buzzer) start_buzzer(2, 3*BUZZER_ON_TICKS, BUZZER_OFF_TICKS);
+#endif
 	
 #ifdef CONFIG_STRENGTH
 	if (request.flag.strength_buzzer && strength_data.num_beeps != 0) 

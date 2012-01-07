@@ -95,6 +95,9 @@ typedef union
 #ifdef CONFIG_EGGTIMER
     u16 update_eggtimer : 1;
 #endif
+#ifdef CONFIG_INTTIMER
+    u16 update_inttimer : 1;
+#endif
     u16 update_temperature   	: 1;    // 1 = Temperature was updated
     u16 update_battery_voltage 	: 1;    // 1 = Battery voltage was updated
     u16 update_date      		: 1;    // 1 = Date was updated

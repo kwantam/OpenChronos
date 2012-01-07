@@ -115,7 +115,14 @@ DATA["CONFIG_EGGTIMER"] = {
         "name": "Eggtimer (1480 bytes)",
         "depends": [],
         "default": False,
-        "help": "Countdown timer for intervals from seconds up to 20+ hours.",
+        "help": "Egg timer",
+}
+
+DATA["CONFIG_INTTIMER"] = {
+        "name": "Inttimer (2496 bytes)",
+        "depends": [],
+        "default": False,
+        "help": "HIIT workout timer.",
 }
 
 DATA["CONFIG_PHASE_CLOCK"] = {

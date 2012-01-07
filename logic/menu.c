@@ -76,6 +76,10 @@
 #include "eggtimer.h"
 #endif
 
+#ifdef CONFIG_INTTIMER
+#include "inttimer.h"
+#endif
+
 #ifdef CONFIG_PROUT
 #include "prout.h"
 #endif
@@ -152,6 +156,13 @@ u8 update_acceleration(void)
 u8 update_eggtimer(void)
 {
 	return (display.flag.update_eggtimer);
+}
+#endif
+
+#ifdef CONFIG_INTTIMER
+u8 update_inttimer(void)
+{
+    return (display.flag.update_inttimer);
 }
 #endif
 
@@ -312,6 +323,17 @@ const struct menu menu_L2_Eggtimer =
         FUNCTION(menu_skip_next),	// next item function
         FUNCTION(display_eggtimer),// display function
         FUNCTION(update_eggtimer),      // new display data
+};
+#endif
+#ifdef CONFIG_INTTIMER
+// line2 - inttimer
+const struct menu menu_L2_Inttimer =
+{
+        FUNCTION(sx_inttimer), // direct
+        FUNCTION(mx_inttimer), // sub
+        FUNCTION(menu_skip_next),
+        FUNCTION(display_inttimer),
+        FUNCTION(update_inttimer),
 };
 #endif
 // Line2 - Battery 
@@ -485,6 +507,9 @@ const struct menu *menu_L2[]={
 	#ifdef CONFIG_EGGTIMER
 	&menu_L2_Eggtimer,
 	#endif
+    #ifdef CONFIG_INTTIMER
+    &menu_L2_Inttimer,
+    #endif
 	#ifdef CONFIG_BATTERY
 	&menu_L2_Battery,
 	#endif

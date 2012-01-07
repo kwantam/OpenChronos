@@ -100,6 +100,9 @@ extern const struct menu menu_L2_Stopwatch;
 #ifdef CONFIG_EGGTIMER
 extern const struct menu menu_L2_Eggtimer;
 #endif
+#ifdef CONFIG_INTTIMER
+extern const struct menu menu_L2_Inttimer;
+#endif
 extern const struct menu menu_L2_Battery;
 extern const struct menu menu_L2_Rf;
 #ifdef CONFIG_PHASE_CLOCK
