@@ -228,31 +228,27 @@ void set_inttimer_to_defaults(void)
 
 // *************************************************************************************************
 // @fn          set_inttimer
-// @brief       Sets the inttimer. (Almost entirely copied from the alarm section
+// @brief       Sets the inttimer variables.
 // @param       none
 // @return      none
 // *************************************************************************************************
-/*
-extern void set_inttimer(void){
-        u8 select;
-	    s32 minutes;
-        s32 seconds;
-        u8 * str;
-        
-        // Store hours, minutes, and seconds in local variables
-        minutes = sInttimer.def_rest_minutes;
-        seconds = sInttimer.def_rest_seconds;
-        
-        // Display "R  MM:SS" (LINE2)
-	display_char(LCD_SEG_L2_4, 'R', SEG_ON);
-	str = _itoa(minutes, 2, 0);
-	display_chars(LCD_SEG_L2_3_2, str, SEG_ON);
-	str = _itoa(seconds, 2, 0);
-	display_chars(LCD_SEG_L2_1_0, str, SEG_ON);
+void set_inttimer(void){
 
-        // Init value index
-	select = 0;	
-		
+    u8 select = 0;
+    // need to be s32s to work with set_value
+    s32 def_workIs = sInttimer.def_workIs;
+    s32 def_workBs = sInttimer.def_workBs;
+    s32 def_rmin = sInttimer.def_rest_minutes;
+    s32 def_rsec = sInttimer.def_rest_seconds;
+    s32 def_fmin = sInttimer.def_off_minutes;
+    s32 def_fsec = sInttimer.def_off_seconds;
+    s32 def_omin = sInttimer.def_on_minutes;
+    s32 def_osec = sInttimer.def_on_seconds;
+    u8 * str;
+
+    // clear display so we can use both lines
+    clear_display();
+
 	// Loop values until all are set or user breaks set
 	while(1) 
 	{
@@ -262,32 +258,80 @@ extern void set_inttimer(void){
 		// M2 (short): save, then exit 
 		if (button.flag.num) 
 		{
-			if ((minutes == 0) && (seconds == 0)) { //prevent zero time
-				seconds = 1;
-			}
+            // prevent zero time for all timers
+			if ((def_rmin == 0) && (def_rsec == 0)) def_rsec = 1;
+			if ((def_fmin == 0) && (def_fsec == 0)) def_fsec = 1;
+			if ((def_omin == 0) && (def_osec == 0)) def_osec = 1;
+            if (def_workIs == 0) def_workIs = 1;
+            if (def_workBs == 0) def_workBs = 1;
+
 			// Store local variables in global Eggtimer default and counters
-			sEggtimer.hours = sEggtimer.default_hours = hours;
-			sEggtimer.minutes = sEggtimer.default_minutes = minutes;
-			sEggtimer.seconds = sEggtimer.default_seconds = seconds;
+            sInttimer.def_on_minutes = def_omin;
+            sInttimer.def_on_seconds = def_osec;
+            sInttimer.def_off_minutes = def_fmin;
+            sInttimer.def_off_seconds = def_fsec;
+            sInttimer.def_rest_minutes = def_rmin;
+            sInttimer.def_rest_seconds = def_rsec;
+            sInttimer.def_workIs = def_workIs;
+            sInttimer.def_workBs = def_workBs;
 			break;
 		}
 
 		switch (select)
 		{
-			case 0: // Set hours
-			    set_value(&hours, 2, 0, 0, 19, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_5_4, display_value1);
-			    select = 1;
+			case 0: // set work blocks
+                display_chars(LCD_SEG_L1_3_0, (u8 *) "BLKS", SEG_ON);
+                clear_line(LINE2);
+			    set_value(&def_workBs, 2, 0, 1, 19, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_3_2, display_value1);
+			    select++; // increment
 			    break;
 
-			case 1:	// Set minutes
-			    set_value(&minutes, 2, 0, 0, 99, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_3_2, display_value1);
-			    select = 2;
+			case 1:	// set work intervals per block
+                display_chars(LCD_SEG_L1_3_0, (u8 *) "INTV", SEG_ON);
+			    set_value(&def_workIs, 2, 0, 1, 99, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_3_2, display_value1);
+			    select++;
 			    break;
                                         
-                        case 2:	// Set seconds
-			    set_value(&seconds, 2, 0, 0, 99, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_1_0, display_value1);
-			    select = 0;
+            case 2:	// set rest timer minutes
+                display_chars(LCD_SEG_L1_3_0, (u8 *) "REST", SEG_ON);
+                str = _itoa(def_rsec, 2, 0);
+                display_chars(LCD_SEG_L2_1_0, str, SEG_ON); // show seconds
+		        display_symbol(LCD_SEG_L2_COL0, SEG_ON);    // show colon
+			    set_value(&def_rmin, 2, 0, 0, 99, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_3_2, display_value1);
+			    select++;
 			    break;
+
+            case 3: // set rest timer seconds
+                set_value(&def_rsec, 2, 0, 0, 59, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_1_0, display_value1);
+                select++;
+                break;
+
+            case 4: // set work-on minutes
+                display_chars(LCD_SEG_L1_3_0, (u8 *) "W ON", SEG_ON);
+                str = _itoa(def_osec, 2, 0);
+                display_chars(LCD_SEG_L2_1_0, str, SEG_ON); // show seconds; colon is already on
+			    set_value(&def_omin, 2, 0, 0, 99, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_3_2, display_value1);
+                select++;
+                break;
+
+            case 5: // set work-on seconds
+                set_value(&def_osec, 2, 0, 0, 59, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_1_0, display_value1);
+                select++;
+                break;
+
+            case 6: // set work-off minutes
+                display_chars(LCD_SEG_L1_2_0, (u8 *) "OFF", SEG_ON);
+                str = _itoa(def_fsec, 2, 0);
+                display_chars(LCD_SEG_L2_1_0, str, SEG_ON); // show seconds; colon is already on
+			    set_value(&def_fmin, 2, 0, 0, 99, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_3_2, display_value1);
+                select++;
+                break;
+
+            case 7: // set work-off seconds
+                set_value(&def_fsec, 2, 0, 0, 59, SETVALUE_ROLLOVER_VALUE + SETVALUE_DISPLAY_VALUE + SETVALUE_NEXT_VALUE, LCD_SEG_L2_1_0, display_value1);
+                select = 0;
+                break;
+
 		}
 	}
 	
@@ -295,7 +339,6 @@ extern void set_inttimer(void){
 	button.all_flags = 0;
 	
 }
-*/
 
 // *************************************************************************************************
 // @fn          inttimer_tick
@@ -398,13 +441,17 @@ void mx_inttimer(u8 line)
 {
 	// Stop inttimer
 	stop_inttimer();
-        
-	// Reset inttimer count to default values
+
+    // if the timer is already reset, go into setup mode
+    // otherwise just reset the timer to present defaults
+    if ( (sInttimer.state == INTTIMER_STOP_REST) &&
+         (sInttimer.minutes == sInttimer.def_rest_minutes) &&
+         (sInttimer.seconds == sInttimer.def_rest_seconds) ) {
+        set_inttimer();
+    }
+
 	set_inttimer_to_defaults();
 	
-    // Set inttimer
-    //set_inttimer();
-			
 	// Display inttimer time
 	display_inttimer(line, DISPLAY_LINE_UPDATE_FULL);
 }
@@ -466,12 +513,12 @@ void display_inttimer(u8 line, u8 update)
 		{
 		    case 3: // update init flag
                 if (sInttimer.state < 2) {
-                    display_chars(LCD_SEG_L2_5_4, " W", SEG_ON);
+                    display_chars(LCD_SEG_L2_5_4, (u8 *) " W", SEG_ON);
                 } else if (sInttimer.state < 4) {
                     str = _itoa(sInttimer.workIs, 2, 0);
                     display_chars(LCD_SEG_L2_5_4, str, SEG_ON);
                 } else {
-                    display_chars(LCD_SEG_L2_5_4, " R", SEG_ON);
+                    display_chars(LCD_SEG_L2_5_4, (u8 *) " R", SEG_ON);
                 }
 		    case 2: // minutes changed
 			str = _itoa(sInttimer.minutes, 2, 0);

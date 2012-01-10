@@ -637,7 +637,7 @@ void process_requests(void)
     }
 
     if (request.flag.inttimer_buzzer_off) {
-        start_buzzer(5, BUZZER_ON_TICKS, BUZZER_OFF_TICKS);
+        start_buzzer(2, BUZZER_ON_TICKS, BUZZER_OFF_TICKS);
     }
 #endif
 	

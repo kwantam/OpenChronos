@@ -65,7 +65,7 @@ extern u8 inttimer_visible(void);
 #define INTTIMER_RUN_REST       	(5u)
 #define INTTIMER_ALARM              (6u)
 
-#define INTTIMER_ALARM_DURATION			(2u)
+#define INTTIMER_ALARM_DURATION			(4u)
 
 // *************************************************************************************************
 // Global Variable section
