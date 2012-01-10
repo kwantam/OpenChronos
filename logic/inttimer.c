@@ -317,7 +317,7 @@ void inttimer_tick(void)
             sInttimer.minutes = sInttimer.def_off_minutes;
             sInttimer.seconds = sInttimer.def_off_seconds;
             sInttimer.drawFlag = 3;
-            request.flag.inttimer_buzzer = 1;
+            request.flag.inttimer_buzzer_off = 1;
         } else if (sInttimer.seconds-- == 0) { // decrement seconds, decrement min if necessary
             sInttimer.seconds = 59;
             sInttimer.drawFlag++;
@@ -341,9 +341,8 @@ void inttimer_tick(void)
                 sInttimer.minutes = sInttimer.def_on_minutes;
                 sInttimer.seconds = sInttimer.def_on_seconds;
                 sInttimer.drawFlag = 3;
+                request.flag.inttimer_buzzer_on = 1;
             }
-            
-            request.flag.inttimer_buzzer = 1;
         } else if (sInttimer.seconds-- == 0) {
             sInttimer.seconds = 59;
             sInttimer.drawFlag++;
@@ -364,9 +363,8 @@ void inttimer_tick(void)
                 sInttimer.seconds = sInttimer.def_on_seconds;
                 sInttimer.workIs = sInttimer.def_workIs;
                 sInttimer.drawFlag = 3;
+                request.flag.inttimer_buzzer_on = 1;
             }
-
-            request.flag.inttimer_buzzer = 1;
         } else if (sInttimer.seconds-- == 0) {
             sInttimer.seconds = 59;
             sInttimer.drawFlag++;
@@ -379,7 +377,7 @@ void inttimer_tick(void)
 		// Decrement alarm duration counter
 		if (sInttimer.duration-- > 0)
 		{
-			request.flag.inttimer_buzzer = 1;
+			request.flag.inttimer_buzzer_off = 1;
 		}
 		else
 		{

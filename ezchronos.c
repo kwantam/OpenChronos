@@ -632,7 +632,13 @@ void process_requests(void)
 	
 #ifdef CONFIG_INTTIMER
     // Generate alarm (two signals every second)
-    if (request.flag.inttimer_buzzer) start_buzzer(2, 3*BUZZER_ON_TICKS, BUZZER_OFF_TICKS);
+    if (request.flag.inttimer_buzzer_on) {
+        start_buzzer(3, 4*BUZZER_ON_TICKS, BUZZER_OFF_TICKS);
+    }
+
+    if (request.flag.inttimer_buzzer_off) {
+        start_buzzer(5, BUZZER_ON_TICKS, BUZZER_OFF_TICKS);
+    }
 #endif
 	
 #ifdef CONFIG_STRENGTH

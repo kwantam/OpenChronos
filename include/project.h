@@ -143,7 +143,8 @@ typedef union
     u16 eggtimer_buzzer : 1; // 1 = Output buzzer for eggtimer
 #endif
 #ifdef CONFIG_INTTIMER
-    u16 inttimer_buzzer : 1;
+    u16 inttimer_buzzer_on : 1;
+    u16 inttimer_buzzer_off : 1;
 #endif
 #ifdef CONFIG_STRENGTH
     u16 strength_buzzer 		: 1;    // 1 = Output buzzer from strength_data
